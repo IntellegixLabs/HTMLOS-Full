@@ -33,9 +33,9 @@ To run HTML OS, you need:
 1. **Clone the Repository**:
    Open your terminal and run the following command to clone the project:
    ```bash
-   git clone https://github.com/your-username/htmlos.git
+   git clone https://github.com/IntellegixLabs/htmlos.git
    ```
-   Replace `your-username` with the actual GitHub username hosting the repository.
+  
 
 2. **Navigate to the Project Directory**:
    ```bash
@@ -43,10 +43,10 @@ To run HTML OS, you need:
    ```
 
 3. **Open the Project in Your Browser**:
-   Simply open the `index.html` file in your browser:
+   Simply open the `htmlos-1.0.htm` file in your browser:
    - On macOS, you can use the `open` command:
      ```bash
-     open index.html
+     open htmlos-1.0.htm
      ```
    - Alternatively, drag and drop the `htmlos-1.0.htm` file into your browser.
 
@@ -96,12 +96,6 @@ This is the **first release** of HTML OS, and while it is functional, there are 
   - Persistent storage using browser APIs (e.g., LocalStorage or IndexedDB).
   - Additional built-in apps like a Calculator, Media Player, and Web Browser.
   - Improved performance and compatibility across all browsers.
-
----
-
-## 📚 Documentation
-
-For detailed documentation on how to use HTML OS and its features, please refer to the [Wiki](https://github.com/your-username/htmlos/wiki).
 
 ---
 
