@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<app>
+    <id>texteditor++</id>
+    <name>Text Editor++</name>
+    <icon>📝</icon
+    <color>#FF5733</color>
+    <content>
+        <html>
+            <script>
+                function loadTextEditor(container, windowId) {
+                    container.innerHTML = `
+                        <div class="text-editor">
+                            <div class="text-editor-toolbar">
+                                <button id="${windowId}-save-btn" class="px-2 py-1 text-sm bg-primary text-white rounded">Save</button>
+                                <button id="${windowId}-new-btn" class="px-2 py-1 text-sm bg-gray-300 dark:bg-gray-700 rounded ml-1">New</button>
+                            </div>
+                            <div class="text-editor-content">
+                                <textarea id="${windowId}-editor" class="w-full h-full p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"></textarea>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Focus textarea on load
+                    setTimeout(() => {
+                        document.getElementById(`${windowId}-editor`).focus();
+                    }, 100);
+                    
+                    // New button
+                    document.getElementById(`${windowId}-new-btn`).addEventListener('click', () => {
+                        if (document.getElementById(`${windowId}-editor`).value.trim() !== '') {
+                            if (confirm('Discard current changes?')) {
+                                document.getElementById(`${windowId}-editor`).value = '';
+                            }
+                        } else {
+                            document.getElementById(`${windowId}-editor`).value = '';
+                        }
+                    });
+                    
+                    // Save button
+                    document.getElementById(`${windowId}-save-btn`).addEventListener('click', () => {
+                        const fileName = prompt('Enter file name:', 'new_file.txt');
+                        if (fileName) {
+                            const content = document.getElementById(`${windowId}-editor`).value;
+                            
+                            // Check if file exists
+                            const existingFile = OSState.files[OSState.currentDir]?.find(f => f.name === fileName);
+                            
+                            if (existingFile) {
+                                if (confirm(`File ${fileName} already exists. Overwrite?`)) {
+                                    existingFile.content = content;
+                                }
+                            } else {
+                                // Create new file
+                                if (!OSState.files[OSState.currentDir]) {
+                                    OSState.files[OSState.currentDir] = [];
+                                }
+                                
+                                OSState.files[OSState.currentDir].push({
+                                    name: fileName,
+                                    content: content,
+                                    type: 'text'
+                                });
+                            }
+                        }
+                    });
+                }
+
+                // Load Text Editor with File
+                function loadTextEditorWithFile(container, windowId, file) {
+                    container.innerHTML = `
+                        <div class="text-editor">
+                            <div class="text-editor-toolbar">
+                                <button id="${windowId}-save-btn" class="px-2 py-1 text-sm bg-primary text-white rounded">Save</button>
+                                <span class="ml-2 text-sm">${file.name}</span>
+                            </div>
+                            <div class="text-editor-content">
+                                <textarea id="${windowId}-editor" class="w-full h-full p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">${file.content}</textarea>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Focus textarea on load
+                    setTimeout(() => {
+                        document.getElementById(`${windowId}-editor`).focus();
+                    }, 100);
+                    
+                    // Save button
+                    document.getElementById(`${windowId}-save-btn`).addEventListener('click', () => {
+                        const content = document.getElementById(`${windowId}-editor`).value;
+                        file.content = content;
+                    });
+                }
+            </script>
+        </html>
+</app>

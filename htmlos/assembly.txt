@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML OS Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        secondary: '#45456A'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .dynamic-bg-color {
+            background-color: var(--dynamic-bg-color);
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .window {
+            position: absolute;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            min-width: 300px;
+            min-height: 200px;
+        }
+
+        .dark .window {
+            background-color: #2d2d2d;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .window-header {
+            padding: 8px 12px;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .window-content {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+        }
+
+        .desktop-icon {
+            text-align: center;
+            width: 80px;
+            margin: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .desktop-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            border-radius: 8px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .terminal {
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+            font-family: monospace;
+            padding: 16px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .terminal-output {
+            white-space: pre-wrap;
+            margin-bottom: 12px;
+        }
+
+        .terminal-input {
+            display: flex;
+            align-items: center;
+        }
+
+        .prompt {
+            color: #4CAF50;
+            margin-right: 8px;
+        }
+
+        .terminal-input input {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-family: monospace;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .file-explorer {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .file-explorer-toolbar {
+            padding: 8px;
+            background-color: #F5F5F5;
+            border-bottom: 1px solid #DDD;
+        }
+
+        .dark .file-explorer-toolbar {
+            background-color: #383838;
+            border-bottom: 1px solid #444;
+        }
+
+        .file-explorer-content {
+            display: flex;
+            flex: 1;
+        }
+
+        .file-explorer-sidebar {
+            width: 180px;
+            border-right: 1px solid #DDD;
+            padding: 8px;
+        }
+
+        .dark .file-explorer-sidebar {
+            border-right: 1px solid #444;
+        }
+
+        .file-explorer-main {
+            flex: 1;
+            padding: 16px;
+            overflow: auto;
+        }
+
+        .text-editor {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .text-editor-toolbar {
+            padding: 8px;
+            background-color: #F5F5F5;
+            border-bottom: 1px solid #DDD;
+        }
+
+        .dark .text-editor-toolbar {
+            background-color: #383838;
+            border-bottom: 1px solid #444;
+        }
+
+        .text-editor-content {
+            flex: 1;
+        }
+
+        .text-editor-content textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            padding: 16px;
+            font-family: monospace;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .dark .text-editor-content textarea {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+        }
+
+        .xml-badge {
+            background-color: #4CAF50;
+            color: white;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .file-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .dark .file-item:hover {
+            background-color: #3d3d3d;
+        }
+
+        .file-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .taskbar-item {
+            padding: 0 8px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            border-radius: 4px;
+            margin-right: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .taskbar-item-active {
+            background-color: rgba(93, 92, 222, 0.2);
+        }
+
+        .taskbar-item:hover {
+            background-color: rgba(93, 92, 222, 0.1);
+        }
+
+        .taskbar-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            margin-right: 8px;
+            color: white;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200">
+    <!-- Desktop -->
+    <div id="desktop" class="relative w-full h-[calc(100%-40px)]"></div>
+    
+    <div id="taskbar" class="absolute bottom-0 left-0 w-full h-10 bg-white dark:bg-gray-800 flex justify-between items-center px-2 border-t border-gray-300 dark:border-gray-700 shadow-md">
+        <div class="flex">
+            <button id="start-button" class="flex items-center justify-center h-8 w-8 bg-primary text-white rounded-md mr-2" title="Start Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button>
+            <div id="taskbar-apps" class="flex"></div>
+            <button id="theme-toggle" type="button" title="Toggle Theme" class="ml-2 flex items-center justify-center h-8 w-8 rounded-md bg-gray-200 dark:bg-gray-700">
+                <div class="flex items-center">
+                    <div id="clock" class="px-2 text-sm"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hidden dark:block">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 block dark:hidden">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    </svg>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Start Menu (Hidden by default) -->
+    <div id="start-menu" class="absolute hidden bottom-10 left-0 w-64 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden z-50">
+        <div class="p-4 bg-primary text-white">
+            <div class="text-lg font-bold">HTML OS Pro</div>
+            <div class="text-sm">user@htmlos</div>
+            <div id="start-menu-items" class="max-h-80 overflow-y-auto"></div>
+            <div class="border-t border-gray-300 dark:border-gray-700 p-2">
+                <button id="power-button" class="flex items-center w-full p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700" title="Power Off">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2 text-red-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
+                    </svg>
+                    <span>Power Off</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+// Check for dark mode preference
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.classList.add('dark');
+}
+
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+    if (event.matches) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+});
+
+// OS State
+const OS = {
+    apps: [],
+    files: {},
+    windows: [],
+    nextWindowId: 1,
+    activeWindowId: null,
+    maxZIndex: 100,
+    currentDir: '/home/user' // Add currentDir initialization
+};
+
+// Apply dynamic background colors
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.dynamic-bg-color').forEach(el => {
+        const color = el.getAttribute('data-bg-color');
+        if (color) {
+            el.style.setProperty('--dynamic-bg-color', color);
+        }
+    });
+});
+
+// Initialize OS
+document.addEventListener('DOMContentLoaded', () => {
+    initializeApps();
+    initializeFiles();
+    setupEventListeners();
+    updateClock();
+    setInterval(updateClock, 1000);
+    scanForXmlApps(); // Ensure XML apps are scanned on load
+});
+
+// Initialize apps
+function initializeApps() {
+    // Core system apps
+    const systemApps = [
+        {
+            id: 'terminal',
+            name: 'Terminal',
+            icon: '💻',
+            color: '#1E1E1E',
+            system: true
+        },
+        {
+            id: 'files',
+            name: 'Files',
+            icon: '📁',
+            color: '#FFA000',
+            system: true
+        },
+        {
+            id: 'editor',
+            name: 'Text Editor',
+            icon: '📝',
+            color: '#2196F3',
+            system: true
+        },
+        {
+            id: 'app-maker',
+            name: 'App Maker',
+            icon: '🧩',
+            color: '#9C27B0',
+            system: true
+        }
+    ];
+    
+    // Add system apps to OS
+    systemApps.forEach(app => {
+        OS.apps.push(app);
+        createDesktopIcon(app);
+        addAppToStartMenu(app);
+    });
+}
+
+// Initialize file system
+function initializeFiles() {
+    // Create basic directories
+    OS.files['/home'] = {};
+    OS.files['/home/user'] = {};
+    OS.files['/home/user/Documents'] = {};
+    OS.files['/home/user/Applications'] = [];
+    
+    // Add welcome file
+    OS.files['/home/user']['welcome.txt'] = {
+        content: 'Welcome to HTML OS Pro!\n\nThis operating system is built with HTML, CSS, and JavaScript.\nYou can create your own applications using XML.',
+        type: 'text'
+    };
+    
+    // Add sample XML app file
+    const calculatorAppXml = `<app>
+<id>calculator</id>
+<name>Calculator</name>
+<icon>🧮</icon>
+<color>#FF5722</color>
+<html>
+<div class="calculator p-4">
+<div class="mb-4">
+<input type="text" id="display" class="w-full p-2 text-right text-lg bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded" readonly>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value="7">7</button>
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value="8">8</button>
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value="9">9</button>
+<button class="calc-btn bg-yellow-200 dark:bg-yellow-600 p-2 rounded" data-value="/">/</button>
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value="4">4</button>
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value="5">5</button>
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value="6">6</button>
+<button class="calc-btn bg-yellow-200 dark:bg-yellow-600 p-2 rounded" data-value="*">*</button>
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value="1">1</button>
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value="2">2</button>
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value="3">3</button>
+<button class="calc-btn bg-yellow-200 dark:bg-yellow-600 p-2 rounded" data-value="-">-</button>
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value="0">0</button>
+<button class="calc-btn bg-gray-200 dark:bg-gray-700 p-2 rounded" data-value=".">.</button>
+<button class="calc-btn bg-green-500 text-white p-2 rounded" data-value="=">=</button>
+<button class="calc-btn bg-yellow-200 dark:bg-yellow-600 p-2 rounded" data-value="+">+</button>
+<button class="calc-btn bg-red-500 text-white p-2 rounded col-span-4" data-value="C">Clear</button>
+</div>
+</div>
+</html>
+<script>
+function initCalculator(container) {
+const display = container.querySelector('#display');
+const buttons = container.querySelectorAll('.calc-btn');
+
+let currentValue = '';
+
+buttons.forEach(button => {
+button.addEventListener('click', () => {
+  const value = button.dataset.value;
+  
+  if (value === 'C') {
+    currentValue = '';
+    display.value = '';
+  } else if (value === '=') {
+    try {
+      currentValue = eval(currentValue).toString();
+      display.value = currentValue;
+    } catch (error) {
+      display.value = 'Error';
+      currentValue = '';
+    }
+  } else {
+    currentValue += value;
+    display.value = currentValue;
+  }
+});
+});
+}
+</script>
+</app>`;
+    
+    OS.files['/home/user/Applications'].push({
+        name: 'app.calculator.xml',
+        content: calculatorAppXml,
+        type: 'xml'
+    });
+    
+    // Add sample notepad app
+    const notepadAppXml = `<app>
+<id>notepad</id>
+<name>Notepad</name>
+<icon>📋</icon>
+<color>#4CAF50</color>
+<html>
+<div class="notepad h-full flex flex-col">
+<div class="toolbar flex p-2 bg-gray-100 dark:bg-gray-700 border-b border-gray-300 dark:border-gray-600">
+<button id="new-note" class="px-2 py-1 bg-primary text-white rounded mr-2">New</button>
+<button id="save-note" class="px-2 py-1 bg-green-500 text-white rounded">Save</button>
+</div>
+<textarea id="notepad-content" class="flex-1 p-2 border-none outline-none bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100" placeholder="Type your notes here..."></textarea>
+</div>
+</html>
+<script>
+function initNotepad(container) {
+const newNoteBtn = container.querySelector('#new-note');
+const saveNoteBtn = container.querySelector('#save-note');
+const textarea = container.querySelector('#notepad-content');
+
+// Initialize with empty content
+textarea.value = '';
+
+newNoteBtn.addEventListener('click', () => {
+if (textarea.value.trim() !== '' && confirm('Discard current note?')) {
+  textarea.value = '';
+}
+});
+
+saveNoteBtn.addEventListener('click', () => {
+alert('Note saved (demo only)');
+});
+}
+</script>
+</app>`;
+    
+    OS.files['/home/user/Applications'].push({
+        name: 'app.notepad.xml',
+        content: notepadAppXml,
+        type: 'xml'
+    });
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Start button
+    document.getElementById('start-button').addEventListener('click', toggleStartMenu);
+    
+    // Theme toggle
+    document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+    
+    // Power button
+    document.getElementById('power-button').addEventListener('click', powerOff);
+    
+    // Close start menu when clicking outside
+    document.addEventListener('click', (e) => {
+        const startMenu = document.getElementById('start-menu');
+        const startButton = document.getElementById('start-button');
+        
+        if (!startMenu.classList.contains('hidden') && 
+            !startMenu.contains(e.target) && 
+            !startButton.contains(e.target)) {
+            startMenu.classList.add('hidden');
+        }
+    });
+}
+
+// Scan for XML apps
+function scanForXmlApps() {
+    const appFiles = OS.files['/home/user/Applications'] || [];
+    
+    appFiles.forEach(file => {
+        if (file.name.startsWith('app.') && file.name.endsWith('.xml')) {
+            try {
+                const app = parseXmlApp(file.content);
+                if (app) {
+                    OS.apps.push(app);
+                    createDesktopIcon(app);
+                    addAppToStartMenu(app);
+                }
+            } catch (error) {
+                console.error('Error parsing XML app:', error);
+            }
+        }
+    });
+}
+
+// Parse XML app
+function parseXmlApp(xmlContent) {
+    try {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlContent, 'text/xml');
+        
+        // Check for errors
+        const parseError = xmlDoc.querySelector('parsererror');
+        if (parseError) {
+            throw new Error('XML parse error');
+        }
+        
+        // Get app elements
+        const id = xmlDoc.querySelector('id')?.textContent;
+        const name = xmlDoc.querySelector('name')?.textContent;
+        const icon = xmlDoc.querySelector('icon')?.textContent;
+        const color = xmlDoc.querySelector('color')?.textContent;
+        const html = xmlDoc.querySelector('html')?.innerHTML;
+        const script = xmlDoc.querySelector('script')?.textContent;
+        
+        if (!id || !name) {
+            throw new Error('Missing required app properties');
+        }
+        
+        return {
+            id,
+            name,
+            icon: icon || '📱',
+            color: color || '#5D5CDE',
+            html,
+            script,
+            system: false,
+            isXmlApp: true
+        };
+    } catch (error) {
+        console.error('Error parsing XML app:', error);
+        return null;
+    }
+}
+
+// Create desktop icon
+function createDesktopIcon(app) {
+    const desktop = document.getElementById('desktop');
+    
+    const icon = document.createElement('div');
+    icon.className = 'desktop-icon';
+    icon.innerHTML = `
+        <div class="icon dynamic-bg-color" data-bg-color="${app.color}">
+            ${app.icon}
+        </div>
+        <div class="mt-2 text-sm">
+            ${app.name}
+            ${app.isXmlApp ? '<span class="xml-badge">XML</span>' : ''}
+        </div>
+    `;
+    
+    icon.addEventListener('click', () => {
+        openApp(app);
+    });
+    
+    desktop.appendChild(icon);
+}
+
+// Add app to start menu
+function addAppToStartMenu(app) {
+    const startMenuItems = document.getElementById('start-menu-items');
+    
+    const item = document.createElement('div');
+    item.className = 'flex items-center p-2 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer';
+    item.innerHTML = `
+        <div class="w-8 h-8 flex items-center justify-center rounded mr-2 dynamic-bg-color" data-bg-color="${app.color}">
+            ${app.icon}
+        </div>
+        <div>
+            ${app.name}
+            ${app.isXmlApp ? '<span class="xml-badge">XML</span>' : ''}
+        </div>
+    `;
+    
+    item.addEventListener('click', () => {
+        openApp(app);
+        document.getElementById('start-menu').classList.add('hidden');
+    });
+    
+    startMenuItems.appendChild(item);
+}
+
+// Open app
+function openApp(app) {
+    const windowId = 'window-' + OS.nextWindowId++;
+    const windowElement = document.createElement('div');
+    windowElement.className = 'window';
+    windowElement.id = windowId;
+    windowElement.style.width = '600px';
+    windowElement.style.height = '400px';
+    windowElement.style.top = '80px';
+    windowElement.style.zIndex = OS.maxZIndex++;
+    
+    // Create window content
+    windowElement.innerHTML = `
+        <div class="window-header dynamic-bg-color" data-bg-color="${app.color}">
+            <div class="flex items-center">
+                <span class="mr-2">${app.icon}</span>
+                <span>${app.name}</span>
+                ${app.isXmlApp ? '<span class="xml-badge ml-2">XML</span>' : ''}
+            </div>
+            <div class="flex space-x-2">
+                <button class="minimize-btn w-5 h-5 flex items-center justify-center rounded-full bg-yellow-400 hover:bg-yellow-500" title="Minimize">
+                    <svg class="w-3 h-3 text-yellow-900" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M19,13H5V11H19V13Z" />
+                    </svg>
+                </button>
+                <button class="maximize-btn w-5 h-5 flex items-center justify-center rounded-full bg-green-400 hover:bg-green-500" title="Maximize">
+                    <svg class="w-3 h-3 text-green-900" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M4,4H20V20H4V4M6,8V18H18V8H6Z" />
+                    </svg>
+                </button>
+                <button class="close-btn w-5 h-5 flex items-center justify-center rounded-full bg-red-400 hover:bg-red-500" title="Close">
+                    <svg class="w-3 h-3 text-red-900" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div class="window-content"></div>
+    `;
+    
+    // Add window to DOM
+    document.getElementById('desktop').appendChild(windowElement);
+    addWindowToTaskbar(app, windowId);
+    OS.windows.push({
+        id: windowId,
+        appId: app.id,
+        minimized: false,
+        maximized: false
+    });
+    makeWindowDraggable(windowId);
+    setupWindowControls(windowId);
+    loadAppContent(app, windowId);
+    setActiveWindow(windowId);
+}
+
+// Add window to taskbar
+function addWindowToTaskbar(app, windowId) {
+    const taskbarApps = document.getElementById('taskbar-apps');
+    
+    const taskbarItem = document.createElement('div');
+    taskbarItem.className = 'taskbar-item';
+    taskbarItem.dataset.windowId = windowId;
+    taskbarItem.innerHTML = `
+        <div class="taskbar-icon dynamic-bg-color" data-bg-color="${app.color}">${app.icon}</div>
+        <span class="text-sm">${app.name}</span>
+    `;
+    
+    taskbarItem.addEventListener('click', () => {
+        const window = OS.windows.find(w => w.id === windowId);
+        
+        if (window.minimized) {
+            document.getElementById(windowId).style.display = 'flex';
+            window.minimized = false;
+            setActiveWindow(windowId);
+        } else if (OS.activeWindowId === windowId) {
+            // Minimize window
+            document.getElementById(windowId).style.display = 'none';
+            window.minimized = true;
+            updateTaskbar();
+        } else {
+            setActiveWindow(windowId);
+        }
+    });
+    
+    taskbarApps.appendChild(taskbarItem);
+}
+
+// Load app content
+function loadAppContent(app, windowId) {
+    const contentContainer = document.querySelector(`#${windowId} .window-content`);
+    
+    if (app.system) {
+        switch (app.id) {
+            case 'terminal':
+                loadTerminal(contentContainer, windowId);
+                break;
+            case 'files':
+                loadFileExplorer(contentContainer, windowId);
+                break;
+            case 'editor':
+                loadTextEditor(contentContainer, windowId);
+                break;
+            case 'app-maker':
+                loadAppMaker(contentContainer, windowId);
+                break;
+            default:
+                contentContainer.innerHTML = '<div class="p-4">App content not available</div>';
+        }
+    } else if (app.isXmlApp) {
+        try {
+            contentContainer.innerHTML = app.html || '<div class="p-4">No content defined</div>';
+            
+            if (app.script) {
+                const scriptFnMatch = /function\s+(\w+)\s*\(/i.exec(app.script);
+                if (scriptFnMatch && scriptFnMatch[1]) {
+                    const initFnName = scriptFnMatch[1];
+                    
+                    const scriptEl = document.createElement('script');
+                    scriptEl.textContent = app.script + `
+                    if (typeof ${initFnName} === 'function') {
+                        ${initFnName}(document.querySelector('#${windowId} .window-content'));
+                    }`;
+                    
+                    document.head.appendChild(scriptEl);
+                    setTimeout(() => {
+                        document.head.removeChild(scriptEl);
+                    }, 100);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading XML app:', error);
+            contentContainer.innerHTML = `<div class="p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-100 rounded">Error loading app: ${error.message}</div>`;
+        }
+    } else {
+        contentContainer.innerHTML = '<div class="p-4">App content not available</div>';
+    }
+}
+
+// Load terminal app
+function loadTerminal(container, windowId) {
+    container.innerHTML = `
+        <div class="terminal h-full">
+            <div class="terminal-output">Welcome to HTML OS Terminal
+Type 'help' to see available commands.</div>
+            <div class="terminal-input">
+                <span class="prompt">user@htmlos:~$</span>
+                <input type="text" id="${windowId}-terminal-input" placeholder="Enter command..." title="Terminal command input">
+            </div>
+        </div>
+    `;
+    
+    const input = document.getElementById(`${windowId}-terminal-input`);
+    const output = container.querySelector('.terminal-output');
+    
+    setTimeout(() => input.focus(), 0);
+    
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const command = input.value.trim();
+            output.innerHTML += `\n<span class="prompt">user@htmlos:~$</span> ${command}`;
+            
+            if (command) {
+                const response = processTerminalCommand(command);
+                output.innerHTML += `\n${response}`;
+            }
+            
+            input.value = '';
+            container.querySelector('.terminal').scrollTop = container.querySelector('.terminal').scrollHeight;
+        }
+    });
+    
+    container.addEventListener('click', () => {
+        input.focus();
+    });
+}
+
+// Process terminal command
+function processTerminalCommand(command) {
+    const args = command.split(' ');
+    const cmd = args[0].toLowerCase();
+    
+    switch (cmd) {
+        case 'help':
+            return `Available commands:
+ls - List files and directories
+pwd - Show current directory
+cd <dir> - Change directory
+cat <file> - Display file contents
+echo <text> - Display text
+clear - Clear terminal
+apps - List installed apps`;
+        
+        case 'ls':
+            let output = '';
+            
+            Object.keys(OS.files).forEach(path => {
+                if (path.startsWith(OS.currentDir + '/')) {
+                    const parts = path.slice(OS.currentDir.length + 1).split('/');
+                    if (parts.length === 1) {
+                        output += `${parts[0]}/\n`;
+                    }
+                }
+            });
+            
+            Object.keys(OS.files[OS.currentDir]).forEach(file => {
+                output += `${file}\n`;
+            });
+            
+            return output || 'No files found';
+        
+        case 'pwd':
+            return OS.currentDir;
+        
+        case 'cd':
+            if (args.length < 2) return 'Usage: cd <directory>';
+            
+            const target = args[1];
+            
+            if (target === '..') {
+                const parts = OS.currentDir.split('/');
+                parts.pop();
+                OS.currentDir = parts.length > 1 ? parts.join('/') : '/';
+                return `Changed to ${OS.currentDir}`;
+            } else if (target.startsWith('/')) {
+                if (OS.files[target] !== undefined || target === '/') {
+                    OS.currentDir = target;
+                    return `Changed to ${OS.currentDir}`;
+                } else {
+                    return `Directory not found: ${target}`;
+                }
+            } else {
+                const newPath = OS.currentDir === '/' ? `/${target}` : `${OS.currentDir}/${target}`;
+                if (OS.files[newPath] !== undefined) {
+                    OS.currentDir = newPath;
+                    return `Changed to ${OS.currentDir}`;
+                } else {
+                    return `Directory not found: ${target}`;
+                }
+            }
+        
+        case 'cat':
+            if (args.length < 2) return 'Usage: cat <file>';
+            
+            const fileName = args[1];
+            const file = OS.files[OS.currentDir]?.[fileName];
+            
+            if (!file) {
+                return `File not found: ${fileName}`;
+            }
+            
+            return file.content;
+        
+        case 'echo':
+            return args.slice(1).join(' ');
+        
+        case 'clear':
+            document.querySelector('.terminal-output').innerHTML = '';
+            return '';
+        
+        case 'apps':
+            let appList = 'Installed Apps:\n';
+            OS.apps.forEach(app => {
+                appList += `${app.name} (${app.system ? 'System' : 'XML'})\n`;
+            });
+            return appList;
+        
+        default:
+            return `Command not found: ${cmd}`;
+    }
+}
+
+// Load file explorer
+function loadFileExplorer(container, windowId) {
+    container.innerHTML = `
+        <div class="file-explorer h-full">
+            <div class="file-explorer-toolbar flex items-center">
+                <button id="${windowId}-back" type="button" title="Go Back" class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md mr-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </button>
+                <input id="${windowId}-path" type="text" title="Current Path" placeholder="Enter path" class="flex-1 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-md" value="${OS.currentDir}">
+                <button id="${windowId}-refresh" type="button" title="Refresh" class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-md ml-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </button>
+            </div>
+            <div class="file-explorer-content">
+                <div class="file-explorer-sidebar">
+                    <div id="${windowId}-home" class="file-item">
+                        <div class="file-icon">🏠</div>
+                        <div>Home</div>
+                    </div>
+                    <div id="${windowId}-documents" class="file-item">
+                        <div class="file-icon">📄</div>
+                        <div>Documents</div>
+                    </div>
+                    <div id="${windowId}-applications" class="file-item">
+                        <div class="file-icon">📱</div>
+                        <div>Applications</div>
+                    </div>
+                </div>
+                <div id="${windowId}-file-list" class="file-explorer-main"></div>
+            </div>
+        </div>
+    `;
+
+    const pathInput = document.getElementById(`${windowId}-path`);
+    pathInput.value = OS.currentDir;
+
+    updateFileList(windowId);
+
+    pathInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const path = pathInput.value;
+            if (OS.files[path] !== undefined || path === '/') {
+                OS.currentDir = path;
+                updateFileList(windowId);
+            } else {
+                alert('Directory not found');
+                pathInput.value = OS.currentDir;
+            }
+        }
+    });
+
+    document.getElementById(`${windowId}-back`).addEventListener('click', () => {
+        const parts = OS.currentDir.split('/');
+        parts.pop();
+        OS.currentDir = parts.length > 1 ? parts.join('/') : '/';
+        updateFileList(windowId);
+    });
+
+    document.getElementById(`${windowId}-refresh`).addEventListener('click', () => {
+        updateFileList(windowId);
+    });
+
+    document.getElementById(`${windowId}-home`).addEventListener('click', () => {
+        OS.currentDir = '/home/user';
+        updateFileList(windowId);
+    });
+
+    document.getElementById(`${windowId}-documents`).addEventListener('click', () => {
+        OS.currentDir = '/home/user/Documents';
+        updateFileList(windowId);
+    });
+
+    document.getElementById(`${windowId}-applications`).addEventListener('click', () => {
+        OS.currentDir = '/home/user/Applications';
+        updateFileList(windowId);
+    });
+}
+
+// Update file list in file explorer
+function updateFileList(windowId) {
+    const fileList = document.getElementById(`${windowId}-file-list`);
+    const pathInput = document.getElementById(`${windowId}-path`);
+    
+    pathInput.value = OS.currentDir;
+    fileList.innerHTML = '';
+
+    if (OS.currentDir !== '/') {
+        const parentItem = document.createElement('div');
+        parentItem.className = 'file-item';
+        parentItem.innerHTML = `
+            <div class="file-icon">📁</div>
+            <div>..</div>
+        `;
+        
+        parentItem.addEventListener('click', () => {
+            const parts = OS.currentDir.split('/');
+            parts.pop();
+            OS.currentDir = parts.length > 1 ? parts.join('/') : '/';
+            updateFileList(windowId);
+        });
+        
+        fileList.appendChild(parentItem);
+    }
+
+    Object.keys(OS.files[OS.currentDir] || {}).forEach(file => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+            <div class="file-icon">📄</div>
+            <div>${file}</div>
+        `;
+        
+        fileItem.addEventListener('dblclick', () => {
+            const fileData = OS.files[OS.currentDir][file];
+            // Handle file opening logic
+            if (fileData) {
+                openFile(fileData);
+            }
+        });
+        
+        fileList.appendChild(fileItem);
+    });
+}
+
+// Open file
+function openFile(file) {
+    if (file.type === 'xml') {
+        try {
+            const app = parseXmlApp(file.content);
+            if (app) {
+                if (confirm(`Do you want to install the app "${app.name}"?`)) {
+                    OS.apps.push(app);
+                    createDesktopIcon(app);
+                    addAppToStartMenu(app);
+                    alert(`App "${app.name}" installed successfully!`);
+                }
+            }
+        } catch (error) {
+            console.error('Error parsing XML app:', error);
+        }
+    } else {
+        const windowId = 'window-' + OS.nextWindowId++;
+        const windowElement = document.createElement('div');
+        windowElement.className = 'window';
+        windowElement.id = windowId;
+        windowElement.style.width = '600px';
+        windowElement.style.height = '400px';
+        windowElement.style.top = '80px';
+        windowElement.style.zIndex = OS.maxZIndex++;
+        
+        windowElement.innerHTML = `
+            <div class="window-header dynamic-bg-color" data-bg-color="#2196F3">
+                <div class="flex items-center">
+                    <span class="mr-2">📝</span>
+                    <span>${file.name}</span>
+                </div>
+                <div class="flex space-x-2">
+                    <button class="minimize-btn w-5 h-5 flex items-center justify-center rounded-full bg-yellow-400 hover:bg-yellow-500" title="Minimize">
+                        <svg class="w-3 h-3 text-yellow-900" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M19,13H5V11H19V13Z" />
+                        </svg>
+                    </button>
+                    <button class="maximize-btn w-5 h-5 flex items-center justify-center rounded-full bg-green-400 hover:bg-green-500" title="Maximize">
+                        <svg class="w-3 h-3 text-green-900" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M4,4H20V20H4V4M6,8V18H18V8H6Z" />
+                        </svg>
+                    </button>
+                    <button class="close-btn w-5 h-5 flex items-center justify-center rounded-full bg-red-400 hover:bg-red-500" title="Close">
+                        <svg class="w-3 h-3 text-red-900" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="window-content">
+                <textarea 
+                    class="w-full h-full" 
+                    readonly 
+                    title="File content"
+                    placeholder="File content will appear here">${file.content}</textarea>
+            </div>
+        `;
+        
+        document.getElementById('desktop').appendChild(windowElement);
+        addWindowToTaskbar({
+            id: 'editor',
+            name: 'Text Editor',
+            icon: '📝',
+            color: '#2196F3'
+        }, windowId);
+        OS.windows.push({
+            id: windowId,
+            appId: 'editor',
+            minimized: false,
+            maximized: false,
+            file: file
+        });
+        makeWindowDraggable(windowId);
+        setupWindowControls(windowId);
+    }
+}
+
+// Make window draggable
+function makeWindowDraggable(windowId) {
+    const windowElement = document.getElementById(windowId);
+    const header = windowElement.querySelector('.window-header');
+    
+    let isDragging = false;
+    let offsetX, offsetY;
+    
+    header.addEventListener('mousedown', (e) => {
+        if (e.target.closest('.close-btn') || 
+            e.target.closest('.minimize-btn') || 
+            e.target.closest('.maximize-btn')) {
+            return;
+        }
+        
+        isDragging = true;
+        offsetX = e.clientX - windowElement.getBoundingClientRect().left;
+        offsetY = e.clientY - windowElement.getBoundingClientRect().top;
+        
+        setActiveWindow(windowId);
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+
+        const newX = e.clientX - offsetX;
+        const newY = e.clientY - offsetY;
+
+        const maxX = document.documentElement.clientWidth - windowElement.offsetWidth;
+        const maxY = document.documentElement.clientHeight - windowElement.offsetHeight - 40;
+
+        windowElement.style.left = `${Math.max(0, Math.min(newX, maxX))}px`;
+        windowElement.style.top = `${Math.max(0, Math.min(newY, maxY))}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+    });
+}
+
+// Setup window controls
+function setupWindowControls(windowId) {
+    const windowElement = document.getElementById(windowId);
+    
+    windowElement.querySelector('.close-btn').addEventListener('click', () => {
+        closeWindow(windowId);
+    });
+    
+    windowElement.querySelector('.minimize-btn').addEventListener('click', () => {
+        minimizeWindow(windowId);
+    });
+    
+    windowElement.querySelector('.maximize-btn').addEventListener('click', () => {
+        toggleMaximizeWindow(windowId);
+    });
+}
+
+// Set active window
+function setActiveWindow(windowId) {
+    OS.activeWindowId = windowId;
+    const windowElement = document.getElementById(windowId);
+    if (windowElement) {
+        windowElement.style.zIndex = OS.maxZIndex++;
+    }
+    updateTaskbar();
+}
+
+// Update taskbar
+function updateTaskbar() {
+    const taskbarItems = document.querySelectorAll('#taskbar-apps .taskbar-item');
+    taskbarItems.forEach(item => {
+        item.classList.remove('taskbar-item-active');
+        if (item.dataset.windowId === OS.activeWindowId) {
+            const window = OS.windows.find(w => w.id === OS.activeWindowId);
+            if (window && !window.minimized) {
+                item.classList.add('taskbar-item-active');
+            }
+        }
+    });
+}
+
+// Close window
+function closeWindow(windowId) {
+    const windowElement = document.getElementById(windowId);
+    if (windowElement) {
+        windowElement.remove();
+    }
+
+    const windowIndex = OS.windows.findIndex(w => w.id === windowId);
+    if (windowIndex >= 0) {
+        OS.windows.splice(windowIndex, 1);
+    }
+
+    const taskbarItem = document.querySelector(`.taskbar-item[data-window-id="${windowId}"]`);
+    if (taskbarItem) {
+        taskbarItem.remove();
+    }
+
+    if (OS.activeWindowId === windowId) {
+        const topWindow = OS.windows.filter(w => !w.minimized).sort((a, b) => {
+            return b.zIndex - a.zIndex;
+        })[0];
+        
+        if (topWindow) {
+            setActiveWindow(topWindow.id);
+        } else {
+            OS.activeWindowId = null;
+            updateTaskbar();
+        }
+    }
+}
+
+// Minimize window
+function minimizeWindow(windowId) {
+    const windowElement = document.getElementById(windowId);
+    if (windowElement) {
+        windowElement.style.display = 'none';
+    }
+
+    const window = OS.windows.find(w => w.id === windowId);
+    if (window) {
+        window.minimized = true;
+    }
+
+    if (OS.activeWindowId === windowId) {
+        const topWindow = OS.windows.filter(w => !w.minimized).sort((a, b) => {
+            return b.zIndex - a.zIndex;
+        })[0];
+
+        if (topWindow) {
+            setActiveWindow(topWindow.id);
+        } else {
+            OS.activeWindowId = null;
+            updateTaskbar();
+        }
+    } else {
+        updateTaskbar();
+    }
+}
+
+// Toggle maximize window
+function toggleMaximizeWindow(windowId) {
+    const windowElement = document.getElementById(windowId);
+    if (!windowElement) return;
+
+    const window = OS.windows.find(w => w.id === windowId);
+    if (!window) return;
+
+    if (window.maximized) {
+        windowElement.style.left = window.prevLeft || '100px';
+        windowElement.style.top = window.prevTop || '80px';
+        windowElement.style.width = window.prevWidth || '600px';
+        windowElement.style.height = window.prevHeight || '400px';
+        window.maximized = false;
+    } else {
+        window.prevLeft = windowElement.style.left;
+        window.prevTop = windowElement.style.top;
+        window.prevWidth = windowElement.style.width;
+        window.prevHeight = windowElement.style.height;
+
+        windowElement.style.left = '0';
+        windowElement.style.top = '0';
+        windowElement.style.width = '100%';
+        windowElement.style.height = 'calc(100% - 40px)'; // 40px for taskbar
+        window.maximized = true;
+    }
+}
+
+// Toggle start menu
+function toggleStartMenu() {
+    const startMenu = document.getElementById('start-menu');
+    startMenu.classList.toggle('hidden');
+}
+
+// Toggle theme
+function toggleTheme() {
+    document.documentElement.classList.toggle('dark');
+}
+
+// Update clock
+function updateClock() {
+    const clockElement = document.getElementById('clock');
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    clockElement.textContent = `${hours}:${minutes}`;
+}
+
+// Power off
+function powerOff() {
+    if (confirm('Are you sure you want to power off HTML OS?')) {
+        document.body.innerHTML = `
+            <div class="flex items-center justify-center h-screen bg-black text-white">
+                <div class="text-center">
+                    <div class="text-3xl mb-4">HTML OS has been powered off</div>
+                    <div class="text-lg">Refresh the page to restart</div>
+                </div>
+            </div>
+        `;
+    }
+}

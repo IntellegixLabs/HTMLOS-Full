@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML OS Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        secondary: '#45456A'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .dynamic-bg-color {
+            background-color: var(--dynamic-bg-color);
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .window {
+            position: absolute;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            min-width: 300px;
+            min-height: 200px;
+        }
+
+        .dark .window {
+            background-color: #2d2d2d;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .window-header {
+            padding: 8px 12px;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .window-content {
+            flex: 1;
+            overflow: auto;
+            padding: 0;
+        }
+
+        .desktop-icon {
+            text-align: center;
+            width: 80px;
+            margin: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .desktop-icon:hover {
+            transform: scale(1.05);
+        }
+
+        .icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            border-radius: 8px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .terminal {
+            background-color: #1E1E1E;
+            color: #FFFFFF;
+            font-family: monospace;
+            padding: 16px;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .terminal-output {
+            white-space: pre-wrap;
+            margin-bottom: 12px;
+        }
+
+        .terminal-input {
+            display: flex;
+            align-items: center;
+        }
+
+        .prompt {
+            color: #4CAF50;
+            margin-right: 8px;
+        }
+
+        .terminal-input input {
+            background: transparent;
+            border: none;
+            color: #FFFFFF;
+            font-family: monospace;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .file-explorer {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .file-explorer-toolbar {
+            padding: 8px;
+            background-color: #F5F5F5;
+            border-bottom: 1px solid #DDD;
+        }
+
+        .dark .file-explorer-toolbar {
+            background-color: #383838;
+            border-bottom: 1px solid #444;
+        }
+
+        .file-explorer-content {
+            display: flex;
+            flex: 1;
+        }
+
+        .file-explorer-sidebar {
+            width: 180px;
+            border-right: 1px solid #DDD;
+            padding: 8px;
+        }
+
+        .dark .file-explorer-sidebar {
+            border-right: 1px solid #444;
+        }
+
+        .file-explorer-main {
+            flex: 1;
+            padding: 16px;
+            overflow: auto;
+        }
+
+        .text-editor {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .text-editor-toolbar {
+            padding: 8px;
+            background-color: #F5F5F5;
+            border-bottom: 1px solid #DDD;
+        }
+
+        .dark .text-editor-toolbar {
+            background-color: #383838;
+            border-bottom: 1px solid #444;
+        }
+
+        .text-editor-content {
+            flex: 1;
+        }
+
+        .text-editor-content textarea {
+            width: 100%;
+            height: 100%;
+            border: none;
+            resize: none;
+            padding: 16px;
+            font-family: monospace;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .dark .text-editor-content textarea {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+        }
+
+        .xml-badge {
+            background-color: #4CAF50;
+            color: white;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .file-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .dark .file-item:hover {
+            background-color: #3d3d3d;
+        }
+
+        .file-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .taskbar-item {
+            padding: 0 8px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            border-radius: 4px;
+            margin-right: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .taskbar-item-active {
+            background-color: rgba(93, 92, 222, 0.2);
+        }
+
+        .taskbar-item:hover {
+            background-color: rgba(93, 92, 222, 0.1);
+        }
+
+        .taskbar-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            margin-right: 8px;
+            color: white;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-200">
+    <!-- Desktop -->
+    <div id="desktop" class="relative w-full h-[calc(100%-40px)]"></div>
+    
+    <div id="taskbar" class="absolute bottom-0 left-0 w-full h-10 bg-white dark:bg-gray-800 flex justify-between items-center px-2 border-t border-gray-300 dark:border-gray-700 shadow-md">
+        <div class="flex">
+            <button id="start-button" class="flex items-center justify-center h-8 w-8 bg-primary text-white rounded-md mr-2" title="Start Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button>
+            <div id="taskbar-apps" class="flex"></div>
+            <button id="theme-toggle" type="button" title="Toggle Theme" class="ml-2 flex items-center justify-center h-8 w-8 rounded-md bg-gray-200 dark:bg-gray-700">
+                <div class="flex items-center">
+                    <div id="clock" class="px-2 text-sm"></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 hidden dark:block">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 block dark:hidden">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
+                    </svg>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Start Menu (Hidden by default) -->
+    <div id="start-menu" class="absolute hidden bottom-10 left-0 w-64 bg-white dark:bg-gray-800 shadow-lg rounded-md overflow-hidden z-50">
+        <div class="p-4 bg-primary text-white">
+            <div class="text-lg font-bold">HTML OS Pro</div>
+            <div class="text-sm">user@htmlos</div>
+            <div id="start-menu-items" class="max-h-80 overflow-y-auto"></div>
+            <div class="border-t border-gray-300 dark:border-gray-700 p-2">
+                <button id="power-button" class="flex items-center w-full p-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700" title="Power Off">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2 text-red-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.636 5.636a9 9 0 1012.728 0M12 3v9" />
+                    </svg>
+                    <span>Power Off</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
