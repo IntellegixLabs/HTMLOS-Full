@@ -5,6 +5,10 @@ Welcome to **HTML OS**, a lightweight, browser-based operating system designed t
 
 ---
 
+##🚨 Still in release 1.0
+
+HTML OS is still very new and please expect bugs, if you find bugs, please report the issue on the [GitHub Issues](https://github.com/IntellegixLabs/htmlos/issues) page.
+
 ## 🚀 Features
 
 - **Desktop Environment**: A fully interactive desktop with draggable windows, a taskbar, and a start menu.
@@ -105,7 +109,7 @@ For detailed documentation on how to use HTML OS and its features, please refer 
 
 ## 🐛 Reporting Issues
 
-If you encounter any bugs or have feature requests, please open an issue on the [GitHub Issues](https://github.com/your-username/htmlos/issues) page.
+If you encounter any bugs or have feature requests, please open an issue on the [GitHub Issues](https://github.com/IntellegixLabs/htmlos/issues) page.
 
 ---
 
