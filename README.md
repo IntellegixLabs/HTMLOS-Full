@@ -48,7 +48,7 @@ To run HTML OS, you need:
      ```bash
      open index.html
      ```
-   - Alternatively, drag and drop the `index.html` file into your browser.
+   - Alternatively, drag and drop the `htmlos-1.0.htm` file into your browser.
 
 4. **Start Exploring**:
    Once the project is loaded in your browser, you can start interacting with the desktop environment, opening apps, and managing files.
