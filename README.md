@@ -5,7 +5,7 @@ Welcome to **HTML OS**, a lightweight, browser-based operating system designed t
 
 ---
 
-##🚨 Still in release 1.0
+## 🚨 Still in release 1.0
 
 HTML OS is still very new and please expect bugs, if you find bugs, please report the issue on the [GitHub Issues](https://github.com/IntellegixLabs/htmlos/issues) page.
 
