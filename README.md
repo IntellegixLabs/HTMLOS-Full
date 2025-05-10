@@ -55,6 +55,62 @@ To run HTML OS, you need:
 
 ---
 
+## Plugins
+It is possible to install plugins for HTML OS, even if its custom made.
+All you need to do is add snippnets of code into the `htmlos-1.0.htm` file:
+
+`````html
+<div id="YOUR_PLUGIN_NAME"></div>
+<script>
+        fetch('data.xml') // Load XML file
+            .then(response => response.text())
+            .then(xmlString => {
+                let parser = new DOMParser();
+                let xmlDoc = parser.parseFromString(xmlString, "application/xml");
+                let content = xmlDoc.querySelector("content").textContent;
+                document.getElementById("xmlContent").innerHTML = content;
+            })
+            .catch(error => console.error("Error loading XML:", error));
+</script>
+
+`````
+If the plugin comes with an overlay, add this:
+`````css
+        .overlay {
+            position: fixed;
+            top: 20%;
+            left: 30%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+        }
+`````
+Change the CSS file however you want, if you know what you are doing.
+Replace `YOUR_PLUGIN_NAME` with your actual plugin name.
+
+## How to make a plugin
+To make a plugin all you need is an XML file, it should look like this:
+````xml
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+    <content>
+        <![CDATA[
+            <div class="overlay">
+                <h2>Hello from XML!</h2>
+                <p>This content is loaded dynamically.</p>
+            </div>
+        ]]>
+    </content>
+</data>
+
+````
+Feel free to edit the provided scripts to match your requirements.
+If you plugin has an overlay, please remember to add an `overlay` class like this
+
+````html
+<div class="overlay"></div>
+````
+Please note that making a HTML OS plugin requires general HTML and XML knowledge.
 ## 🛠️ Usage
 
 ### Desktop Environment
