@@ -56,13 +56,14 @@ To run HTML OS, you need:
 ---
 
 ## Plugins
+# PLUGIN ONLY WORKS FOR LATEST RELEASE, GET IT IN THE RELEASES TAB.
 It is possible to install plugins for HTML OS, even if its custom made.
 All you need to do is add snippnets of code into the `htmlos-1.0.htm` file:
 
 `````html
-<div id="YOUR_PLUGIN_NAME"></div>
+<div id="./Plugins/YOUR_PLUGIN_NAME"></div>
 <script>
-        fetch('data.xml') // Load XML file
+        fetch('YOUR_PLUGIN_NAME') // Load XML file
             .then(response => response.text())
             .then(xmlString => {
                 let parser = new DOMParser();
