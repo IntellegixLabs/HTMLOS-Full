@@ -60,7 +60,7 @@ It is possible to install plugins for HTML OS, even if its custom made.
 All you need to do is add snippnets of code into the `htmlos-1.0.htm` file:
 
 `````html
-<div id="YOUR_PLUGIN_NAME"></div>
+<div id="./Plugins/YOUR_PLUGIN_NAME"></div>
 <script>
         fetch('data.xml') // Load XML file
             .then(response => response.text())
@@ -86,7 +86,7 @@ If the plugin comes with an overlay, add this:
         }
 `````
 Change the CSS file however you want, if you know what you are doing.
-Replace `YOUR_PLUGIN_NAME` with your actual plugin name.
+Replace `YOUR_PLUGIN_NAME` with your actual plugin name. Plugins should be in the `Plugins` folder.
 
 ## How to make a plugin
 To make a plugin all you need is an XML file, it should look like this:
